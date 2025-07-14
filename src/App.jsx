@@ -2,7 +2,7 @@ import React from 'react'
 import { FaMapMarkerAlt, FaSearch } from 'react-icons/fa'
 import HourlyForecast from './components/HourlyForecast'
 import axios from 'axios';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function App() {
   const [weatherData, setWeatherData] = useState(null);
@@ -12,23 +12,33 @@ function App() {
   const api_key = "71a2d1806d2c458e83c213514251307";
   const api_url = "http://api.weatherapi.com/v1/forecast.json";
 
-  const fetchData = async () => {
-    if (!city) return;
-    
-    setLoading(true);
-    try {
-      const response = await axios.get(`${api_url}?key=${api_key}&q=${city}&days=1&aqi=no&alerts=no`);
-      setWeatherData(response.data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Fetch data when city changes
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!city) return;
+      
+      setLoading(true);
+      try {
+        const response = await axios.get(`${api_url}?key=${api_key}&q=${city}&days=1&aqi=no&alerts=no`);
+        setWeatherData(response.data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // Add a delay to prevent too many API calls while typing
+    const timer = setTimeout(() => {
+      fetchData();
+    }, 500); // 500ms delay
+
+    return () => clearTimeout(timer); // Cleanup timer on unmount or city change
+  }, [city]);
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
-      fetchData();
+      // The useEffect will handle the fetch when city changes
     }
   }
 
