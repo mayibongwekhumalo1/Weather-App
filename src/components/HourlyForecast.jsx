@@ -27,9 +27,13 @@ function HourlyForecast({ hourlyData }) {
     scrollToIndex(newIndex);
   };
 
+  // Get current hour using Date
+  const currentHour = new Date().getHours();
+
   return (
     <div className="mt-4">
       <h3 className="text-lg font-semibold mb-2">Hourly Forecast</h3>
+      <p className="text-sm mb-2">Current Hour: {currentHour}:00</p>
       
       <div className="relative">
         {/* Navigation arrows */}
